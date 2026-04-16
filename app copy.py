@@ -285,6 +285,128 @@ def rate_sign(v, label=""):
     return "⚪",TXT2,f"Zero {label}".strip()
 
 
+# ─── Interpretation helpers ──────────────────────────────────────────
+
+def _trend(vals_dict):
+    """Overall trend direction across 4 years."""
+    vals = [vals_dict[yr] for yr in YEARS]
+    diffs = [vals[i+1] - vals[i] for i in range(3)]
+    pos = sum(1 for d in diffs if d > 0)
+    neg = sum(1 for d in diffs if d < 0)
+    if pos == 3: return "consistently improving"
+    if neg == 3: return "consistently declining"
+    if pos == 2: return "mostly improving"
+    if neg == 2: return "mostly declining"
+    return "volatile"
+
+def _yr_label_cr(v):
+    if v < 1:   return "🔴","Risky",                f"({fr(v)}) — may struggle to cover short-term obligations"
+    if v < 1.5: return "🟡","Adequate but tight",   f"({fr(v)}) — below the healthy 1.5–2.0 range"
+    if v <= 2:  return "🟢","Healthy",              f"({fr(v)}) — {fr(v)}× assets vs short-term liabilities"
+    if v <= 3:  return "🟢","Good",                 f"({fr(v)}) — solid short-term liquidity cushion"
+    return      "🟡","Potentially inefficient",     f"({fr(v)}) — excess working capital may be idle"
+
+def _yr_label_qr(v):
+    if v < 1:   return "🔴","Risky",              f"({fr(v)}) — may rely on inventory or borrowing to meet short-term debts"
+    if v <= 1.5:return "🟢","Strong liquidity",   f"({fr(v)}) — covers liabilities without relying on inventory"
+    if v <= 2:  return "🟢","Very good",          f"({fr(v)}) — highly liquid even without inventory"
+    return      "🟡","Very conservative",         f"({fr(v)}) — may signal under-investment in growth"
+
+def _yr_label_cashr(v):
+    if v < 0.5: return "🟡","Below ideal",           f"({fr(v)}) — relies on receivables/inventory; not necessarily bad"
+    if v <= 1:  return "🟢","Ideal",                 f"({fr(v)}) — covers {int(v*100)}% of short-term debts immediately"
+    return      "🟡","Extremely conservative",       f"({fr(v)}) — more cash than all short-term liabilities"
+
+def _yr_label_tdr(v):
+    if v <= 0.2:return "🟢","Very low debt",         f"({fr(v)}) — highly equity-financed"
+    if v <= 0.4:return "🟢","Low–moderate debt",     f"({fr(v)}) — solid solvency; most assets financed by equity"
+    if v <= 0.6:return "🟡","Acceptable",            f"({fr(v)}) — some exposure to downturns"
+    if v <= 0.8:return "🔴","High debt load",        f"({fr(v)}) — vulnerability warning signal"
+    return      "🔴","Very high leverage",           f"({fr(v)}) — severe solvency risk"
+
+def _yr_label_de(v):
+    if v <= 0.5:return "🟢","Very healthy",          f"({fr(v)}) — low leverage"
+    if v <= 1:  return "🟢","Healthy",               f"({fr(v)}) — balanced capital structure"
+    if v <= 1.5:return "🟡","Acceptable",            f"({fr(v)}) — normal for stable industries"
+    if v <= 2:  return "🔴","High leverage",         f"({fr(v)}) — more debt than equity"
+    return      "🔴","Very high leverage",           f"({fr(v)}) — potential solvency problems"
+
+def _yr_label_em(v):
+    if v <= 1.5:return "🟢","Low leverage",          f"({fr(v)}) — mostly equity-financed"
+    if v <= 2.5:return "🟡","Moderate leverage",     f"({fr(v)}) — balanced debt/equity mix"
+    if v <= 4:  return "🔴","High leverage",         f"({fr(v)}) — aggressive financial management"
+    return      "🔴","Very high leverage",           f"({fr(v)}) — heavy reliance on debt"
+
+def _yr_label_wc(v):
+    if v > 0:   return "🟢","Positive",  f"({fm(v)}) — long-term resources exceed fixed assets → financial safety margin"
+    if v < 0:   return "🔴","Negative",  f"({fm(v)}) — fixed assets partly financed by short-term debt → structurally risky"
+    return      "⚪","Zero",             "— long-term resources exactly cover fixed assets"
+
+def _yr_label_wcn(v):
+    if v > 0:   return "🔴","Positive",  f"({fm(v)}) — operating cycle needs financing; cash tied up in operations"
+    if v < 0:   return "🟢","Negative",  f"({fm(v)}) — operating cycle self-financed; suppliers fund the business"
+    return      "⚪","Zero",             "— operating cycle is self-financing"
+
+def _yr_label_nc(v):
+    if v > 0:   return "🟢","Positive",  f"({fm(v)}) — cash surplus after financing the operating cycle"
+    if v < 0:   return "🔴","Negative",  f"({fm(v)}) — operating cycle consumes more than long-term cushion → needs short-term financing"
+    return      "⚪","Zero",             "— WC exactly covers WCN"
+
+def _yr_label_nd(v):
+    if v > 0:   return "🔴","Net Debt",  f"of {fm(v)} — more obligations than cash → leverage risk"
+    if v < 0:   return "🟢","Net Cash",  f"of {fm(abs(v))} — cash exceeds all obligations → strong financial stability"
+    return      "⚪","Neutral",          "— cash exactly offsets debt"
+
+def _yr_label_ce(v):
+    return "🔵","Capital deployed", f"of {fm(v)} — total capital employed in operations (NCA + WCN)"
+
+def _yr_label_ic(v):
+    return "🔵","Capital invested", f"of {fm(v)} — total invested capital (Equity + Net Debt), equals Capital Employed"
+
+def _evo_html(vals_dict, yr_label_fn, metric_name, higher_is_better=True):
+    v0, v3 = vals_dict[YEARS[0]], vals_dict[YEARS[-1]]
+    trend = _trend(vals_dict)
+    chg = yoy_pct(v3, v0)
+    chg_str = f" ({abs(chg):.1f}% {'higher' if chg >= 0 else 'lower'} than 2021)" if chg is not None else ""
+    good = ("improving" in trend and higher_is_better) or ("declining" in trend and not higher_is_better)
+    bad  = ("declining" in trend and higher_is_better) or ("improving" in trend and not higher_is_better)
+    color = GREEN if good else RED if bad else ORANGE
+    ico0, lbl0, _ = yr_label_fn(v0)
+    ico3, lbl3, _ = yr_label_fn(v3)
+    return (
+        f'<div style="margin-top:8px;padding:8px 10px;background:{BG};border-radius:6px;font-size:.82rem;">'
+        f'<span style="color:{TXT2};">📈 2021→2024: </span>'
+        f'<span style="color:{color};font-weight:600;">{trend}</span>{chg_str}. '
+        f'<span style="color:{TXT2};">Moved from </span>{ico0} <b>{lbl0}</b>'
+        f'<span style="color:{TXT2};"> in 2021 → </span>{ico3} <b>{lbl3}</b>'
+        f'<span style="color:{TXT2};"> in 2024.</span>'
+        f'</div>'
+    )
+
+def _interp_block(vals_dict, yr_label_fn, metric_name, higher_is_better=True):
+    """Full interpretation block: per-year table + evolution summary."""
+    rows = ""
+    for yr in YEARS:
+        ico, lbl, detail = yr_label_fn(vals_dict[yr])
+        rows += (
+            f'<tr>'
+            f'<td style="padding:3px 10px 3px 0;color:{TXT2};font-size:.78rem;'
+            f'white-space:nowrap;vertical-align:top;">{yr}</td>'
+            f'<td style="padding:3px 0;font-size:.82rem;line-height:1.4;">'
+            f'{ico} <b>{lbl}</b> {detail}</td>'
+            f'</tr>'
+        )
+    evo = _evo_html(vals_dict, yr_label_fn, metric_name, higher_is_better)
+    return (
+        f'<div style="margin-top:6px;">'
+        f'<div style="font-size:.78rem;font-weight:600;color:{TXT2};'
+        f'text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">📖 Interpretation</div>'
+        f'<table style="width:100%;border-collapse:collapse;">{rows}</table>'
+        + evo +
+        f'</div>'
+    )
+
+
 # ─── Formatting helpers ──────────────────────────────────────────────
 def fm(v_k):  return f"€{v_k/1000:,.1f}M"
 def fr(v):    return f"{v:.2f}"
@@ -372,7 +494,7 @@ def section(title):
 def metric_card_expander(
     title, all_year_vals, is_eur, formula,
     threshold_html=None, impacts=None, key_prefix="card",
-    rate_fn=None,
+    rate_fn=None, interpret_fn=None,
 ):
     """
     Interactive card. Shows 2024 value as the expander label.
@@ -455,6 +577,10 @@ def metric_card_expander(
             st.markdown(
                 f'<div style="font-size:.84rem;margin:6px 0;">{threshold_html}</div>',
                 unsafe_allow_html=True)
+
+        # ── Interpretation ──
+        if interpret_fn:
+            st.markdown(interpret_fn(all_year_vals), unsafe_allow_html=True)
 
         # ── Impacted metrics ──
         if impacts:
@@ -757,6 +883,90 @@ def _scenario_drill(M, yr):
 
 
 # =====================================================================
+# KEY TAKEAWAYS — Dynamic 4-year narrative panels
+# =====================================================================
+def key_takeaways_section(M):
+    section("📌 Key Takeaways — 4-Year Financial Story")
+    c1, c2, c3 = st.columns(3)
+
+    # ─ Liquidity ─
+    with c1:
+        cr  = {yr: M[yr]["Current Ratio"]  for yr in YEARS}
+        qr  = {yr: M[yr]["Quick Ratio"]    for yr in YEARS}
+        csr = {yr: M[yr]["Cash Ratio"]     for yr in YEARS}
+        cr_t = _trend(cr)
+        cr0_ico, cr0_lbl, _ = _yr_label_cr(cr[2021])
+        cr4_ico, cr4_lbl, _ = _yr_label_cr(cr[2024])
+        qr4_ico, qr4_lbl,  _ = _yr_label_qr(qr[2024])
+        csr4_ico, csr4_lbl, _ = _yr_label_cashr(csr[2024])
+        cr_chg = yoy_pct(cr[2024], cr[2021])
+        cr_chg_str = f" ({abs(cr_chg):.1f}% {'↑' if cr_chg >= 0 else '↓'})" if cr_chg is not None else ""
+        good_cr = GREEN if "improving" in cr_t else RED if "declining" in cr_t else ORANGE
+        st.markdown(
+            f'<div class="ipanel">'
+            f'<div style="font-size:1rem;font-weight:700;color:{BLUE};margin-bottom:10px;">💧 Liquidity</div>'
+            f'<div style="font-size:.84rem;line-height:1.7;">'
+            f'The <b>Current Ratio</b> has been '
+            f'<span style="color:{good_cr};font-weight:600;">{cr_t}</span>'
+            f' over 2021–2024{cr_chg_str}, moving from {cr0_ico} <b>{cr0_lbl}</b> ({fr(cr[2021])}) '
+            f'to {cr4_ico} <b>{cr4_lbl}</b> ({fr(cr[2024])}) in 2024.<br><br>'
+            f'In 2024, the <b>Quick Ratio</b> stands at {fr(qr[2024])} — {qr4_ico} <b>{qr4_lbl}</b> — '
+            f'and the <b>Cash Ratio</b> at {fr(csr[2024])} — {csr4_ico} <b>{csr4_lbl}</b>.'
+            f'</div></div>', unsafe_allow_html=True)
+
+    # ─ Solvency & Leverage ─
+    with c2:
+        tdr = {yr: M[yr]["Total Debt Ratio"]  for yr in YEARS}
+        de  = {yr: M[yr]["Debt-to-Equity"]    for yr in YEARS}
+        em  = {yr: M[yr]["Equity Multiplier"] for yr in YEARS}
+        tdr_t = _trend(tdr)
+        tdr0_ico, tdr0_lbl, _ = _yr_label_tdr(tdr[2021])
+        tdr4_ico, tdr4_lbl, _ = _yr_label_tdr(tdr[2024])
+        de4_ico,  de4_lbl,  _ = _yr_label_de(de[2024])
+        em4_ico,  em4_lbl,  _ = _yr_label_em(em[2024])
+        tdr_chg = yoy_pct(tdr[2024], tdr[2021])
+        tdr_chg_str = f" ({abs(tdr_chg):.1f}% {'↑' if tdr_chg >= 0 else '↓'})" if tdr_chg is not None else ""
+        # lower TDR is better → reverse color logic
+        good_tdr = GREEN if "declining" in tdr_t else RED if "improving" in tdr_t else ORANGE
+        st.markdown(
+            f'<div class="ipanel">'
+            f'<div style="font-size:1rem;font-weight:700;color:{BLUE};margin-bottom:10px;">🏦 Solvency & Leverage</div>'
+            f'<div style="font-size:.84rem;line-height:1.7;">'
+            f'The <b>Total Debt Ratio</b> has been '
+            f'<span style="color:{good_tdr};font-weight:600;">{tdr_t}</span>'
+            f' over 2021–2024{tdr_chg_str}, from {tdr0_ico} <b>{tdr0_lbl}</b> ({fr(tdr[2021])}) '
+            f'to {tdr4_ico} <b>{tdr4_lbl}</b> ({fr(tdr[2024])}) in 2024.<br><br>'
+            f'In 2024, the <b>D/E ratio</b> of {fr(de[2024])} signals {de4_ico} <b>{de4_lbl}</b>, '
+            f'and the <b>Equity Multiplier</b> of {fr(em[2024])} indicates {em4_ico} <b>{em4_lbl}</b>.'
+            f'</div></div>', unsafe_allow_html=True)
+
+    # ─ Financial Structure ─
+    with c3:
+        wc  = {yr: M[yr]["WC"]       for yr in YEARS}
+        wcn = {yr: M[yr]["WCN"]      for yr in YEARS}
+        nc  = {yr: M[yr]["NC"]       for yr in YEARS}
+        nd  = {yr: M[yr]["Net Debt"] for yr in YEARS}
+        wc4_ico,  wc4_lbl,  _ = _yr_label_wc(wc[2024])
+        wcn4_ico, wcn4_lbl, _ = _yr_label_wcn(wcn[2024])
+        nc4_ico,  nc4_lbl,  _ = _yr_label_nc(nc[2024])
+        nd4_ico,  nd4_lbl,  _ = _yr_label_nd(nd[2024])
+        c21, c24 = M[2021]["Scenario"], M[2024]["Scenario"]
+        lbl21, lbl24 = SCENARIOS[c21][0], SCENARIOS[c24][0]
+        scenario_path = " → ".join(f"Case {M[yr]['Scenario']}" for yr in YEARS)
+        st.markdown(
+            f'<div class="ipanel">'
+            f'<div style="font-size:1rem;font-weight:700;color:{BLUE};margin-bottom:10px;">🏗️ Financial Structure</div>'
+            f'<div style="font-size:.84rem;line-height:1.7;">'
+            f'Adidas followed the scenario path <b>{scenario_path}</b>, from '
+            f'<b>Case {c21} — {lbl21}</b> in 2021 to <b>Case {c24} — {lbl24}</b> in 2024.<br><br>'
+            f'In 2024: WC {wc4_ico} <b>{wc4_lbl}</b> ({fm(wc[2024])}), '
+            f'WCN {wcn4_ico} <b>{wcn4_lbl}</b> ({fm(wcn[2024])}), '
+            f'NC {nc4_ico} <b>{nc4_lbl}</b> ({fm(nc[2024])}), '
+            f'and {nd4_ico} <b>{nd4_lbl}</b> of {fm(abs(nd[2024]))}.'
+            f'</div></div>', unsafe_allow_html=True)
+
+
+# =====================================================================
 # PAGE 1 — Executive Summary
 # =====================================================================
 def page_summary(df, M):
@@ -779,6 +989,7 @@ def page_summary(df, M):
             formula="WC = Total Equity + Total NCL − Total NCA",
             impacts=["Net Cash (NC)", "Scenario classification"],
             key_prefix="sum_wc",
+            interpret_fn=lambda v: _interp_block(v, _yr_label_wc, "Working Capital", higher_is_better=True),
         )
     with cols[1]:
         metric_card_expander(
@@ -787,6 +998,7 @@ def page_summary(df, M):
             formula="NC = WC − WCN  [verify: Cash − Borr.Current − Overdraft]",
             impacts=["Scenario classification (sign determines case)"],
             key_prefix="sum_nc",
+            interpret_fn=lambda v: _interp_block(v, _yr_label_nc, "Net Cash", higher_is_better=True),
         )
     with cols[2]:
         metric_card_expander(
@@ -801,6 +1013,7 @@ def page_summary(df, M):
             impacts=["Liquidity assessment"],
             key_prefix="sum_cr",
             rate_fn=rate_cr,
+            interpret_fn=lambda v: _interp_block(v, _yr_label_cr, "the Current Ratio", higher_is_better=True),
         )
     with cols[3]:
         metric_card_expander(
@@ -815,7 +1028,10 @@ def page_summary(df, M):
             impacts=["Solvency assessment", "Invested Capital"],
             key_prefix="sum_de",
             rate_fn=rate_de,
+            interpret_fn=lambda v: _interp_block(v, _yr_label_de, "Debt-to-Equity", higher_is_better=False),
         )
+
+    key_takeaways_section(M)
 
     section("WC / WCN / NC Evolution (€M)")
     fig = go.Figure()
@@ -1030,6 +1246,14 @@ def page_aggregates(df, M):
         "Invested Capital": ["Benchmark for capital efficiency"],
     }
 
+    AGG_INTERP = {
+        "WC":               lambda v: _interp_block(v, _yr_label_wc,  "Working Capital",      higher_is_better=True),
+        "WCN":              lambda v: _interp_block(v, _yr_label_wcn, "Working Capital Need",  higher_is_better=False),
+        "NC":               lambda v: _interp_block(v, _yr_label_nc,  "Net Cash",              higher_is_better=True),
+        "Net Debt":         lambda v: _interp_block(v, _yr_label_nd,  "Net Debt",              higher_is_better=False),
+        "Capital Employed": lambda v: _interp_block(v, _yr_label_ce,  "Capital Employed",      higher_is_better=True),
+        "Invested Capital": lambda v: _interp_block(v, _yr_label_ic,  "Invested Capital",      higher_is_better=True),
+    }
     c1, c2, c3 = st.columns(3)
     for i, key in enumerate(AGG):
         col = [c1, c2, c3][i % 3]
@@ -1039,6 +1263,7 @@ def page_aggregates(df, M):
                 is_eur=True, formula=FORMULAS.get(key,""),
                 impacts=AGG_IMPACTS.get(key,[]),
                 key_prefix=f"agg_{key}",
+                interpret_fn=AGG_INTERP.get(key),
             )
 
     # NC verification
@@ -1124,11 +1349,17 @@ def page_liquidity(df, M):
         c1, c2 = st.columns([1, 2])
         with c1:
             # ★ Interactive expander card (all years + trend inside)
+            LIQ_INTERP = {
+                "Current Ratio": lambda v: _interp_block(v, _yr_label_cr,    "the Current Ratio", higher_is_better=True),
+                "Quick Ratio":   lambda v: _interp_block(v, _yr_label_qr,    "the Quick Ratio",   higher_is_better=True),
+                "Cash Ratio":    lambda v: _interp_block(v, _yr_label_cashr, "the Cash Ratio",    higher_is_better=True),
+            }
             metric_card_expander(
                 title, {yr: M[yr][key] for yr in YEARS},
                 is_eur=False, formula=formula,
                 threshold_html=thresh_html, key_prefix=f"liq_{key}",
                 rate_fn=rate_fn,
+                interpret_fn=LIQ_INTERP.get(key),
             )
             # Verdict for 2024
             e, co, sub = rate_fn(M[2024][key])
@@ -1174,6 +1405,7 @@ def page_solvency(df, M):
             ),
             impacts=["Financial leverage aggressiveness"],
             key_prefix="sol_em",
+            interpret_fn=lambda v: _interp_block(v, _yr_label_em, "the Equity Multiplier", higher_is_better=False),
         )
     with c2:
         st.plotly_chart(_ratio_chart(M,"Equity Multiplier","Equity Multiplier",[],
@@ -1196,6 +1428,7 @@ def page_solvency(df, M):
             ),
             impacts=["Solvency assessment","Debt capacity"],
             key_prefix="sol_tdr", rate_fn=rate_tdr,
+            interpret_fn=lambda v: _interp_block(v, _yr_label_tdr, "the Total Debt Ratio", higher_is_better=False),
         )
         st.markdown(
             f'<div class="ipanel">'
@@ -1222,6 +1455,7 @@ def page_solvency(df, M):
             ),
             impacts=["Leverage","Solvency risk","Invested Capital"],
             key_prefix="sol_de", rate_fn=rate_de,
+            interpret_fn=lambda v: _interp_block(v, _yr_label_de, "Debt-to-Equity", higher_is_better=False),
         )
         st.markdown(
             f'<div class="ipanel">'
