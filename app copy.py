@@ -232,7 +232,7 @@ def compute(df):
         bnc=_g(df,"Borrowings non-current",yr); bc=_g(df,"Borrowings current",yr)
         bo=_g(df,"Bank overdraft",yr)
         wc=eq+ncl-nca; wcn=(inv+ar+oca)-(ap+ocl); nc=wc-wcn
-        nd=bnc+bc-cash; ce=nca+wcn; ic=eq+nd; debt=bnc+bc
+        nd=ncl+bc-cash; ce=nca+wcn; ic=eq+nd; debt=bnc+bc
         cr=ca/cl if cl else 0; qr=(ca-inv)/cl if cl else 0
         cashr=cash/cl if cl else 0; em=ta/eq if eq else 0
         tdr=debt/ta if ta else 0; de=debt/eq if eq else 0
