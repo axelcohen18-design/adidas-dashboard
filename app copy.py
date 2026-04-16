@@ -232,7 +232,7 @@ def compute(df):
         bnc=_g(df,"Borrowings non-current",yr); bc=_g(df,"Borrowings current",yr)
         bo=_g(df,"Bank overdraft",yr)
         wc=eq+ncl-nca; wcn=(inv+ar+oca)-(ap+ocl); nc=wc-wcn
-        nd=ncl+bc-cash; ce=nca+wcn; ic=eq+nd; debt=bnc+bc
+        nd=ncl+bc-cash; ce=nca+wcn; ic=eq+nd; debt=ncl+bc
         cr=ca/cl if cl else 0; qr=(ca-inv)/cl if cl else 0
         cashr=cash/cl if cl else 0; em=ta/eq if eq else 0
         tdr=debt/ta if ta else 0; de=debt/eq if eq else 0
@@ -806,7 +806,7 @@ def page_summary(df, M):
         metric_card_expander(
             "Debt-to-Equity", {yr: M[yr]["Debt-to-Equity"] for yr in YEARS},
             is_eur=False,
-            formula="D/E = (Borrowings NC + Borrowings Current) / Total Equity",
+            formula="D/E = (Total NCL + Borrowings Current) / Total Equity",
             threshold_html=(
                 f'<span style="color:{GREEN};">● 0.5–1.0 — Healthy</span> &nbsp;'
                 f'<span style="color:{ORANGE};">● 1.0–1.5 — Acceptable</span> &nbsp;'
@@ -1005,7 +1005,7 @@ def page_aggregates(df, M):
         f'<div class="formula">WC  = Total Equity + Total NCL − Total NCA</div>'
         f'<div class="formula">WCN = (Inventories + Accounts Receivable + Other CA) − (Accounts Payable + Other CL)</div>'
         f'<div class="formula">NC  = WC − WCN &nbsp;&nbsp;[verify: Cash − Borrowings Current − Bank Overdraft]</div>'
-        f'<div class="formula">Net Debt = Borrowings NC + Borrowings Current − Cash</div>'
+        f'<div class="formula">Net Debt = Total NCL + Borrowings Current − Cash</div>'
         f'<div class="formula">Capital Employed = Total NCA + WCN</div>'
         f'<div class="formula">Invested Capital = Total Equity + Net Debt</div>'
         f'</div>', unsafe_allow_html=True)
@@ -1017,7 +1017,7 @@ def page_aggregates(df, M):
         "WC":               "Total Equity + Total NCL − Total NCA",
         "WCN":              "(Inventories + AR + Other CA) − (AP + Other CL)",
         "NC":               "WC − WCN  [verify: Cash − Borr.Current − Overdraft]",
-        "Net Debt":         "Borrowings NC + Borrowings Current − Cash",
+        "Net Debt":         "Total NCL + Borrowings Current − Cash",
         "Capital Employed": "Total NCA + WCN",
         "Invested Capital": "Total Equity + Net Debt",
     }
@@ -1188,7 +1188,7 @@ def page_solvency(df, M):
         metric_card_expander(
             "Total Debt Ratio", {yr: M[yr]["Total Debt Ratio"] for yr in YEARS},
             is_eur=False,
-            formula="(Borrowings NC + Borrowings Current) / Total Assets",
+            formula="(Total NCL + Borrowings Current) / Total Assets",
             threshold_html=(
                 f'<span style="color:{GREEN};">● 0.2–0.4 Low debt</span><br>'
                 f'<span style="color:{ORANGE};">● 0.4–0.6 Acceptable</span><br>'
@@ -1214,7 +1214,7 @@ def page_solvency(df, M):
         metric_card_expander(
             "Debt-to-Equity", {yr: M[yr]["Debt-to-Equity"] for yr in YEARS},
             is_eur=False,
-            formula="(Borrowings NC + Borrowings Current) / Total Equity",
+            formula="(Total NCL + Borrowings Current) / Total Equity",
             threshold_html=(
                 f'<span style="color:{GREEN};">● 0.5–1.0 Healthy</span><br>'
                 f'<span style="color:{ORANGE};">● 1.0–1.5 Acceptable</span><br>'
