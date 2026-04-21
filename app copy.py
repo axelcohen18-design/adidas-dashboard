@@ -346,6 +346,12 @@ def slide(sid,yr,pres=True):
                 bl="".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets)
                 ul=f"<ul style='margin:8px 0 0;padding-left:18px;font-size:{fs_body};color:{TXT};line-height:1.7;'>{bl}</ul>"
                 st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:{fs_body};margin-bottom:6px;'>{title}</div><div style='font-size:{fs_ctx};color:{TXT2};line-height:1.6;'>{context}</div>{ul}</div>",unsafe_allow_html=True)
+        st.markdown(
+            f"<p style='font-size:{fs_body};color:{GOLD};font-weight:600;margin:14px 0 6px;'>🟡 Growth Outlook — </p>"
+            f"<p style='font-size:{fs_ctx};color:{TXT2};margin:0 0 6px;'>Accelerating trajectory projected for 2026E, with revenue expected to grow ~7.6% and margin expansion continuing as operational leverage kicks in.</p>"
+            f"<p style='font-size:{fs_body};color:{ORANGE};font-weight:600;margin:14px 0 6px;'>🟠 Key Challenge — </p>"
+            f"<p style='font-size:{fs_ctx};color:{TXT2};margin:0;'>Profit margins remain thinner than the 2021 baseline (EBIT 8.3% vs. 9.4% pre-crisis). Continuous focus on profitability improvement — particularly below the gross line — is required.</p>",
+            unsafe_allow_html=True)
 
     elif sid=="investment":
         st.markdown(f"<h2 style='color:{TXT};'>Investment Management — FY {yr}</h2>",unsafe_allow_html=True)
