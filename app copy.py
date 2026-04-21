@@ -326,13 +326,10 @@ def slide(sid,yr,pres=True):
             f"EBIT Margin {fp(EBITM[yr])} shows {'operational recovery' if EBITM[yr]>0.05 else 'margin pressure'}. "
             f"Key cost drivers: Distribution ({fp(DISTR_V[yr]/REVENUE[yr])} of revenue) and Marketing ({fp(MKTG_V[yr]/REVENUE[yr])}).",GREEN),
             unsafe_allow_html=True)
-        st.markdown(f"<div style='font-size:{'1.1rem' if pres else '1.0rem'};font-weight:700;margin:24px 0 12px;"
-                    f"padding-bottom:5px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",
-                    unsafe_allow_html=True)
+        fs_body="0.9rem" if pres else "0.82rem"
+        fs_ctx ="0.85rem" if pres else "0.78rem"
+        st.markdown(f"<div style='font-size:{'1.1rem' if pres else '1.0rem'};font-weight:700;margin:24px 0 12px;padding-bottom:5px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",unsafe_allow_html=True)
         KT_OP=[
-            (BLUE,"V-Shaped Recovery",
-             "Strong rebound following the 2023 performance trough — Adidas successfully navigated the post-Yeezy shock and returned to growth.",
-             []),
             (RED,"2023 Low Point",
              "The crisis year crystallised in two headline figures:",
              ["Revenue dip of −4.8% vs. 2022",
@@ -342,26 +339,13 @@ def slide(sid,yr,pres=True):
              ["Gross Margin: 51.6% — back above the 50% threshold, reflecting brand pricing power",
               "EBITDA Margin: 12.6% — significant recovery from ~6% in 2023",
               "EBIT Margin: 8.3% — up from ~1% in 2023"]),
-            (GOLD,"Growth Outlook",
-             "Accelerating trajectory projected for 2026E, with revenue expected to grow ~7.6% and margin expansion continuing as operational leverage kicks in.",
-             []),
-            (ORANGE,"Key Challenge",
-             "Profit margins remain thinner than the 2021 baseline (EBIT 8.3% vs. 9.4% pre-crisis). Continuous focus on profitability improvement — particularly below the gross line — is required.",
-             []),
         ]
         kt_cols=st.columns(2)
-        fs_body="0.9rem" if pres else "0.82rem"
-        fs_ctx ="0.85rem" if pres else "0.78rem"
         for i,(color,title,context,bullets) in enumerate(KT_OP):
             with kt_cols[i%2]:
-                bl=("".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets) if bullets else "")
-                ul=(f"<ul style='margin:8px 0 0;padding-left:18px;font-size:{fs_body};color:{TXT};line-height:1.7;'>{bl}</ul>" if bl else "")
-                st.markdown(f"""<div style="background:{color}14;border:1px solid {color}45;
-                    border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;">
-                    <div style="font-weight:700;color:{color};font-size:{fs_body};margin-bottom:6px;">{title}</div>
-                    <div style="font-size:{fs_ctx};color:{TXT2};line-height:1.6;">{context}</div>
-                    {ul}
-                </div>""",unsafe_allow_html=True)
+                bl="".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets)
+                ul=f"<ul style='margin:8px 0 0;padding-left:18px;font-size:{fs_body};color:{TXT};line-height:1.7;'>{bl}</ul>"
+                st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:{fs_body};margin-bottom:6px;'>{title}</div><div style='font-size:{fs_ctx};color:{TXT2};line-height:1.6;'>{context}</div>{ul}</div>",unsafe_allow_html=True)
 
     elif sid=="investment":
         st.markdown(f"<h2 style='color:{TXT};'>Investment Management — FY {yr}</h2>",unsafe_allow_html=True)
@@ -653,10 +637,11 @@ def tab_operating():
     st.markdown(f"<div style='font-size:1.05rem;font-weight:700;margin:28px 0 14px;"
                 f"padding-bottom:6px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",
                 unsafe_allow_html=True)
+    st.markdown(
+        f"<p style='font-size:0.95rem;color:{BLUE};font-weight:600;margin:0 0 6px;'>🔵 V-Shaped Recovery — </p>"
+        f"<p style='font-size:0.82rem;color:{TXT2};margin:0 0 14px;'>Strong rebound following the 2023 performance trough — Adidas successfully navigated the post-Yeezy shock and returned to growth.</p>",
+        unsafe_allow_html=True)
     KT=[
-        (BLUE,"V-Shaped Recovery",
-         "Strong rebound following the 2023 performance trough — Adidas successfully navigated the post-Yeezy shock and returned to growth.",
-         []),
         (RED,"2023 Low Point",
          "The crisis year crystallised in two headline figures:",
          ["Revenue dip of −4.8% vs. 2022",
@@ -666,26 +651,19 @@ def tab_operating():
          ["Gross Margin: 51.6% — back above the 50% threshold, reflecting brand pricing power",
           "EBITDA Margin: 12.6% — significant recovery from ~6% in 2023",
           "EBIT Margin: 8.3% — up from ~1% in 2023"]),
-        (GOLD,"Growth Outlook",
-         "Accelerating trajectory projected for 2026E, with revenue expected to grow ~7.6% and margin expansion continuing as operational leverage kicks in.",
-         []),
-        (ORANGE,"Key Challenge",
-         "Profit margins remain thinner than the 2021 baseline (EBIT 8.3% vs. 9.4% pre-crisis). Continuous focus on profitability improvement — particularly below the gross line — is required.",
-         []),
     ]
     cols=st.columns(2)
     for i,(color,title,context,bullets) in enumerate(KT):
         with cols[i%2]:
-            bl=("".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets)
-                if bullets else "")
-            ul=(f"<ul style='margin:8px 0 0;padding-left:18px;font-size:0.84rem;color:{TXT};line-height:1.7;'>{bl}</ul>"
-                if bl else "")
-            st.markdown(f"""<div style="background:{color}14;border:1px solid {color}45;
-                border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;">
-                <div style="font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;">{title}</div>
-                <div style="font-size:0.82rem;color:{TXT2};line-height:1.6;">{context}</div>
-                {ul}
-            </div>""",unsafe_allow_html=True)
+            bl="".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets)
+            ul=f"<ul style='margin:8px 0 0;padding-left:18px;font-size:0.84rem;color:{TXT};line-height:1.7;'>{bl}</ul>"
+            st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;'>{title}</div><div style='font-size:0.82rem;color:{TXT2};line-height:1.6;'>{context}</div>{ul}</div>",unsafe_allow_html=True)
+    st.markdown(
+        f"<p style='font-size:0.95rem;color:{GOLD};font-weight:600;margin:14px 0 6px;'>🟡 Growth Outlook — </p>"
+        f"<p style='font-size:0.82rem;color:{TXT2};margin:0 0 6px;'>Accelerating trajectory projected for 2026E, with revenue expected to grow ~7.6% and margin expansion continuing as operational leverage kicks in.</p>"
+        f"<p style='font-size:0.95rem;color:{ORANGE};font-weight:600;margin:14px 0 6px;'>🟠 Key Challenge — </p>"
+        f"<p style='font-size:0.82rem;color:{TXT2};margin:0;'>Profit margins remain thinner than the 2021 baseline (EBIT 8.3% vs. 9.4% pre-crisis). Continuous focus on profitability improvement — particularly below the gross line — is required.</p>",
+        unsafe_allow_html=True)
 
 def tab_investment():
     sec("Working Capital Days — FY 2025")
