@@ -485,6 +485,27 @@ def slide(sid,yr,pres=True):
             f"P/B {fx(PB[yr])} reflects premium brand valuation above book. "
             f"Dividend €{DPS[yr]:.2f}/share (payout {fp(DIVPAY[yr])}) — cut in 2023 to preserve cash, now normalising.",GOLD),
             unsafe_allow_html=True)
+        fs_body="0.9rem" if pres else "0.82rem"
+        fs_ctx ="0.85rem" if pres else "0.78rem"
+        st.markdown(f"<div style='font-size:{'1.1rem' if pres else '1.0rem'};font-weight:700;margin:24px 0 12px;padding-bottom:5px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",unsafe_allow_html=True)
+        INV_KT=[
+            (GREEN,"EPS (€7.50)",
+             "Strong rebound in profitability following losses in 2023.",
+             "Earnings per share turned sharply positive, confirming the operational recovery is translating into bottom-line results."),
+            (ORANGE,"P/E (25.7×)",
+             "High multiple → market expects strong future earnings growth and continued recovery.",
+             "Investors are pricing in further margin expansion and revenue growth — the stock commands a premium over current earnings."),
+            (BLUE,"P/B (5.97×)",
+             "Premium valuation → reflects strong brand value but trading well above book value.",
+             "The gap between market and book value signals market confidence in Adidas's intangible assets and brand equity."),
+            (GOLD,"Dividend Yield (1.0%)",
+             "Low yield — dividend policy remains conservative as the company prioritises reinvestment and balance sheet repair.",
+             "The dividend was cut in 2023 to preserve cash; the current yield reflects a gradual, disciplined normalisation."),
+        ]
+        kt_cols=st.columns(2)
+        for i,(color,title,subtitle,detail) in enumerate(INV_KT):
+            with kt_cols[i%2]:
+                st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:{fs_body};margin-bottom:4px;'>{title}</div><div style='font-size:{fs_body};color:{TXT};font-style:italic;margin-bottom:6px;'>{subtitle}</div><div style='font-size:{fs_ctx};color:{TXT2};line-height:1.6;'>{detail}</div></div>",unsafe_allow_html=True)
 
     elif sid=="statements":
         st.markdown(f"<h2 style='color:{TXT};'>Full Financial Statements</h2>",unsafe_allow_html=True)
@@ -793,6 +814,25 @@ def tab_investors():
     st.markdown(ibox("EPS recovery: €11.85 (2021) → -€0.42 (2023) → €7.50 (2025). "
         "P/E 25.7× (2025) signals market confidence. P/B 5.97× reflects premium brand valuation. "
         "Dividend cut to €0.70 in 2023–2024 (cash preservation), rising to €2.00 in 2025."),unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size:1.0rem;font-weight:700;margin:28px 0 14px;padding-bottom:5px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",unsafe_allow_html=True)
+    INV_KT=[
+        (GREEN,"EPS (€7.50)",
+         "Strong rebound in profitability following losses in 2023.",
+         "Earnings per share turned sharply positive, confirming the operational recovery is translating into bottom-line results."),
+        (ORANGE,"P/E (25.7×)",
+         "High multiple → market expects strong future earnings growth and continued recovery.",
+         "Investors are pricing in further margin expansion and revenue growth — the stock commands a premium over current earnings."),
+        (BLUE,"P/B (5.97×)",
+         "Premium valuation → reflects strong brand value but trading well above book value.",
+         "The gap between market and book value signals market confidence in Adidas's intangible assets and brand equity."),
+        (GOLD,"Dividend Yield (1.0%)",
+         "Low yield — dividend policy remains conservative as the company prioritises reinvestment and balance sheet repair.",
+         "The dividend was cut in 2023 to preserve cash; the current yield reflects a gradual, disciplined normalisation."),
+    ]
+    cols=st.columns(2)
+    for i,(color,title,subtitle,detail) in enumerate(INV_KT):
+        with cols[i%2]:
+            st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:0.95rem;margin-bottom:4px;'>{title}</div><div style='font-size:0.88rem;color:{TXT};font-style:italic;margin-bottom:6px;'>{subtitle}</div><div style='font-size:0.82rem;color:{TXT2};line-height:1.6;'>{detail}</div></div>",unsafe_allow_html=True)
 
 def tab_statements():
     import pandas as pd
