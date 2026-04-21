@@ -263,7 +263,8 @@ SLIDES=[
     {"id":"sfs",          "title":"🏗️ Financial Structure"},
     {"id":"finmgmt",      "title":"🛡️ Financial Management"},
     {"id":"investors",    "title":"💹 Investor Ratios"},
-    {"id":"statements",   "title":"📋 Full Statements"},
+    {"id":"statements",      "title":"📋 Full Statements"},
+    {"id":"recommendations", "title":"💡 Recommendations"},
 ]
 
 def slide(sid,yr,pres=True):
@@ -325,6 +326,42 @@ def slide(sid,yr,pres=True):
             f"EBIT Margin {fp(EBITM[yr])} shows {'operational recovery' if EBITM[yr]>0.05 else 'margin pressure'}. "
             f"Key cost drivers: Distribution ({fp(DISTR_V[yr]/REVENUE[yr])} of revenue) and Marketing ({fp(MKTG_V[yr]/REVENUE[yr])}).",GREEN),
             unsafe_allow_html=True)
+        st.markdown(f"<div style='font-size:{'1.1rem' if pres else '1.0rem'};font-weight:700;margin:24px 0 12px;"
+                    f"padding-bottom:5px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",
+                    unsafe_allow_html=True)
+        KT_OP=[
+            (BLUE,"V-Shaped Recovery",
+             "Strong rebound following the 2023 performance trough — Adidas successfully navigated the post-Yeezy shock and returned to growth.",
+             []),
+            (RED,"2023 Low Point",
+             "The crisis year crystallised in two headline figures:",
+             ["Revenue dip of −4.8% vs. 2022",
+              "EBIT crashed 86.5% vs. 2021 — reflecting both volume and margin destruction"]),
+            (GREEN,"Margin Restoration (FY 2025)",
+             "All three margin lines recovered meaningfully:",
+             ["Gross Margin: 51.6% — back above the 50% threshold, reflecting brand pricing power",
+              "EBITDA Margin: 12.6% — significant recovery from ~6% in 2023",
+              "EBIT Margin: 8.3% — up from ~1% in 2023"]),
+            (GOLD,"Growth Outlook",
+             "Accelerating trajectory projected for 2026E, with revenue expected to grow ~7.6% and margin expansion continuing as operational leverage kicks in.",
+             []),
+            (ORANGE,"Key Challenge",
+             "Profit margins remain thinner than the 2021 baseline (EBIT 8.3% vs. 9.4% pre-crisis). Continuous focus on profitability improvement — particularly below the gross line — is required.",
+             []),
+        ]
+        kt_cols=st.columns(2)
+        fs_body="0.9rem" if pres else "0.82rem"
+        fs_ctx ="0.85rem" if pres else "0.78rem"
+        for i,(color,title,context,bullets) in enumerate(KT_OP):
+            with kt_cols[i%2]:
+                bl=("".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets) if bullets else "")
+                ul=(f"<ul style='margin:8px 0 0;padding-left:18px;font-size:{fs_body};color:{TXT};line-height:1.7;'>{bl}</ul>" if bl else "")
+                st.markdown(f"""<div style="background:{color}14;border:1px solid {color}45;
+                    border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;">
+                    <div style="font-weight:700;color:{color};font-size:{fs_body};margin-bottom:6px;">{title}</div>
+                    <div style="font-size:{fs_ctx};color:{TXT2};line-height:1.6;">{context}</div>
+                    {ul}
+                </div>""",unsafe_allow_html=True)
 
     elif sid=="investment":
         st.markdown(f"<h2 style='color:{TXT};'>Investment Management — FY {yr}</h2>",unsafe_allow_html=True)
@@ -472,6 +509,42 @@ def slide(sid,yr,pres=True):
         with c2:
             st.plotly_chart(waterfall_fig(2025),use_container_width=True)
 
+    elif sid=="recommendations":
+        st.markdown(f"<h2 style='color:{TXT};'>Strategic Recommendations</h2>",unsafe_allow_html=True)
+        st.markdown(f"<p style='color:{TXT2};font-size:0.95rem;margin-bottom:20px;'>Based on the 2021–2025 financial analysis — four priority actions for Adidas leadership.</p>",unsafe_allow_html=True)
+        RECS=[
+            (RED,"1. Restore Working Capital Health",
+             "WC fell 49% (€5.0bn → €2.5bn) · WCN rose 43% (€1.75bn → €2.5bn) · Net Cash near zero (€19M vs €3.2bn in 2021)",
+             ["One bad year would force reliance on short-term bank loans",
+              "Reinforce long-term resources and aggressively shorten the operating cycle",
+              "Priority: reduce inventory glut — the core driver of WCN surge"]),
+            (ORANGE,"2. Rebuild the Liquidity Buffer",
+             "Cash ratio fell from 0.43 → 0.18 (−58%) · Quick ratio at 0.68 (below the critical 1.0 threshold)",
+             ["Adidas cannot cover short-term liabilities without liquidating slow-moving inventory",
+              "Target a cash buffer of €2.5–3bn to restore Quick Ratio above 1",
+              "Maintain disciplined dividend policy · defer major share buybacks"]),
+            (BLUE,"3. Gradually Deleverage",
+             "D/E rose from 0.76 → 1.09 (+44%) · Equity Multiplier at 3.5× (high-leverage zone)",
+             ["Interest coverage and ND/EBITDA are healthy, but capital mix has shifted structurally",
+              "Prioritise debt repayment over shareholder returns for the next 2–3 years",
+              "Goal: restore pre-crisis capital structure"]),
+            (GREEN,"4. Continue Margin Recovery Below the Gross Line",
+             "Gross margin stable (~51%) · EBIT margin 8.3% vs 9.4% in 2021 · EBITDA margin 12.6% vs 14.4% in 2021",
+             ["Margin pressure comes from marketing, distribution and G&A — not COGS",
+              "Restructure cost base to recover the 2021 margin profile",
+              "Operational leverage should improve as revenue grows toward 2026E"]),
+        ]
+        cols=st.columns(2)
+        for i,(color,title,context,bullets) in enumerate(RECS):
+            with cols[i%2]:
+                bl="".join(f"<li style='margin-bottom:6px;'>{b}</li>" for b in bullets)
+                st.markdown(f"""<div style="background:{color}18;border:1px solid {color}50;
+                    border-left:5px solid {color};border-radius:12px;padding:22px 24px;margin-bottom:18px;">
+                    <div style="font-weight:700;color:{color};font-size:1.05rem;margin-bottom:8px;">{title}</div>
+                    <div style="font-size:0.82rem;color:{TXT2};margin-bottom:12px;font-style:italic;">{context}</div>
+                    <ul style="margin:0;padding-left:18px;font-size:0.88rem;color:{TXT};line-height:1.7;">{bl}</ul>
+                </div>""",unsafe_allow_html=True)
+
 # ── PRESENTATION MODE ─────────────────────────────────────────────────────────
 def pres_mode():
     if "slide" not in st.session_state: st.session_state.slide=0
@@ -575,6 +648,44 @@ def tab_operating():
         col.plotly_chart(dark_fig(fig,280),use_container_width=True)
     st.markdown(ibox("COGS improved from 52.7% (2022) to 48.4% (2025) of revenue — richer product mix and fewer discounts. "
         "Marketing at 12.4% (2024) reflects Yeezy replacement spend. EBIT margin at 8.3% signals normalisation."),unsafe_allow_html=True)
+
+    # ── KEY TAKEAWAYS ─────────────────────────────────────────────────────────
+    st.markdown(f"<div style='font-size:1.05rem;font-weight:700;margin:28px 0 14px;"
+                f"padding-bottom:6px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",
+                unsafe_allow_html=True)
+    KT=[
+        (BLUE,"V-Shaped Recovery",
+         "Strong rebound following the 2023 performance trough — Adidas successfully navigated the post-Yeezy shock and returned to growth.",
+         []),
+        (RED,"2023 Low Point",
+         "The crisis year crystallised in two headline figures:",
+         ["Revenue dip of −4.8% vs. 2022",
+          "EBIT crashed 86.5% vs. 2021 — reflecting both volume and margin destruction"]),
+        (GREEN,"Margin Restoration (FY 2025)",
+         "All three margin lines recovered meaningfully:",
+         ["Gross Margin: 51.6% — back above the 50% threshold, reflecting brand pricing power",
+          "EBITDA Margin: 12.6% — significant recovery from ~6% in 2023",
+          "EBIT Margin: 8.3% — up from ~1% in 2023"]),
+        (GOLD,"Growth Outlook",
+         "Accelerating trajectory projected for 2026E, with revenue expected to grow ~7.6% and margin expansion continuing as operational leverage kicks in.",
+         []),
+        (ORANGE,"Key Challenge",
+         "Profit margins remain thinner than the 2021 baseline (EBIT 8.3% vs. 9.4% pre-crisis). Continuous focus on profitability improvement — particularly below the gross line — is required.",
+         []),
+    ]
+    cols=st.columns(2)
+    for i,(color,title,context,bullets) in enumerate(KT):
+        with cols[i%2]:
+            bl=("".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets)
+                if bullets else "")
+            ul=(f"<ul style='margin:8px 0 0;padding-left:18px;font-size:0.84rem;color:{TXT};line-height:1.7;'>{bl}</ul>"
+                if bl else "")
+            st.markdown(f"""<div style="background:{color}14;border:1px solid {color}45;
+                border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;">
+                <div style="font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;">{title}</div>
+                <div style="font-size:0.82rem;color:{TXT2};line-height:1.6;">{context}</div>
+                {ul}
+            </div>""",unsafe_allow_html=True)
 
 def tab_investment():
     sec("Working Capital Days — FY 2025")
@@ -755,43 +866,6 @@ def tab_statements():
                 fig2.add_trace(go.Bar(name=lbl,x=[str(y) for y in YH],y=[BS[key][yr] for yr in YH]))
             fig2.update_layout(barmode="stack",title=dict(text="Equity & Liabilities Structure (€M)",font=dict(size=13,color=TXT2)))
             st.plotly_chart(dark_fig(fig2,300),use_container_width=True)
-
-    # ── RECOMMENDATIONS ───────────────────────────────────────────────────────
-    st.markdown(f"<div style='font-size:1.15rem;font-weight:700;margin:28px 0 14px;"
-                f"padding-bottom:6px;border-bottom:2px solid {GOLD};color:{TXT};'>💡 Strategic Recommendations</div>",
-                unsafe_allow_html=True)
-    RECS=[
-        (RED,"1. Restore Working Capital Health",
-         "WC fell 49% (€5.0bn → €2.5bn) · WCN rose 43% (€1.75bn → €2.5bn) · Net Cash near zero (€19M vs €3.2bn in 2021)",
-         ["One bad year would force reliance on short-term bank loans",
-          "Reinforce long-term resources and aggressively shorten the operating cycle",
-          "Priority: reduce inventory glut — the core driver of WCN surge"]),
-        (ORANGE,"2. Rebuild the Liquidity Buffer",
-         "Cash ratio fell from 0.43 → 0.18 (−58%) · Quick ratio at 0.68 (below the critical 1.0 threshold)",
-         ["Adidas cannot cover short-term liabilities without liquidating slow-moving inventory",
-          "Target a cash buffer of €2.5–3bn to restore Quick Ratio above 1",
-          "Maintain disciplined dividend policy · defer major share buybacks"]),
-        (BLUE,"3. Gradually Deleverage",
-         "D/E rose from 0.76 → 1.09 (+44%) · Equity Multiplier at 3.5× (high-leverage zone)",
-         ["Interest coverage and ND/EBITDA are healthy, but capital mix has shifted structurally",
-          "Prioritise debt repayment over shareholder returns for the next 2–3 years",
-          "Goal: restore pre-crisis capital structure"]),
-        (GREEN,"4. Continue Margin Recovery Below the Gross Line",
-         "Gross margin stable (~51%) · EBIT margin 8.3% vs 9.4% in 2021 · EBITDA margin 12.6% vs 14.4% in 2021",
-         ["Margin pressure comes from marketing, distribution and G&A — not COGS",
-          "Restructure cost base to recover the 2021 margin profile",
-          "Operational leverage should improve as revenue grows toward 2026E"]),
-    ]
-    cols=st.columns(2)
-    for i,(color,title,context,bullets) in enumerate(RECS):
-        with cols[i%2]:
-            bl="".join(f"<li style='margin-bottom:4px;'>{b}</li>" for b in bullets)
-            st.markdown(f"""<div style="background:{color}10;border:1px solid {color}40;
-                border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;">
-                <div style="font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;">{title}</div>
-                <div style="font-size:0.78rem;color:{TXT2};margin-bottom:10px;font-style:italic;">{context}</div>
-                <ul style="margin:0;padding-left:16px;font-size:0.83rem;color:{TXT};line-height:1.6;">{bl}</ul>
-            </div>""",unsafe_allow_html=True)
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
