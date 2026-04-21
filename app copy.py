@@ -613,6 +613,44 @@ def tab_operating():
     st.markdown(ibox("COGS improved from 52.7% (2022) to 48.4% (2025) of revenue — richer product mix and fewer discounts. "
         "Marketing at 12.4% (2024) reflects Yeezy replacement spend. EBIT margin at 8.3% signals normalisation."),unsafe_allow_html=True)
 
+    # ── KEY TAKEAWAYS ─────────────────────────────────────────────────────────
+    st.markdown(f"<div style='font-size:1.05rem;font-weight:700;margin:28px 0 14px;"
+                f"padding-bottom:6px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",
+                unsafe_allow_html=True)
+    KT=[
+        (BLUE,"V-Shaped Recovery",
+         "Strong rebound following the 2023 performance trough — Adidas successfully navigated the post-Yeezy shock and returned to growth.",
+         []),
+        (RED,"2023 Low Point",
+         "The crisis year crystallised in two headline figures:",
+         ["Revenue dip of −4.8% vs. 2022",
+          "EBIT crashed 86.5% vs. 2021 — reflecting both volume and margin destruction"]),
+        (GREEN,"Margin Restoration (FY 2025)",
+         "All three margin lines recovered meaningfully:",
+         ["Gross Margin: 51.6% — back above the 50% threshold, reflecting brand pricing power",
+          "EBITDA Margin: 12.6% — significant recovery from ~6% in 2023",
+          "EBIT Margin: 8.3% — up from ~1% in 2023"]),
+        (GOLD,"Growth Outlook",
+         "Accelerating trajectory projected for 2026E, with revenue expected to grow ~7.6% and margin expansion continuing as operational leverage kicks in.",
+         []),
+        (ORANGE,"Key Challenge",
+         "Profit margins remain thinner than the 2021 baseline (EBIT 8.3% vs. 9.4% pre-crisis). Continuous focus on profitability improvement — particularly below the gross line — is required.",
+         []),
+    ]
+    cols=st.columns(2)
+    for i,(color,title,context,bullets) in enumerate(KT):
+        with cols[i%2]:
+            bl=("".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets)
+                if bullets else "")
+            ul=(f"<ul style='margin:8px 0 0;padding-left:18px;font-size:0.84rem;color:{TXT};line-height:1.7;'>{bl}</ul>"
+                if bl else "")
+            st.markdown(f"""<div style="background:{color}14;border:1px solid {color}45;
+                border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;">
+                <div style="font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;">{title}</div>
+                <div style="font-size:0.82rem;color:{TXT2};line-height:1.6;">{context}</div>
+                {ul}
+            </div>""",unsafe_allow_html=True)
+
 def tab_investment():
     sec("Working Capital Days — FY 2025")
     c1,c2,c3,c4=st.columns(4)
