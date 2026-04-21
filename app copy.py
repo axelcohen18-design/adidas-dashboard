@@ -263,7 +263,8 @@ SLIDES=[
     {"id":"sfs",          "title":"🏗️ Financial Structure"},
     {"id":"finmgmt",      "title":"🛡️ Financial Management"},
     {"id":"investors",    "title":"💹 Investor Ratios"},
-    {"id":"statements",   "title":"📋 Full Statements"},
+    {"id":"statements",      "title":"📋 Full Statements"},
+    {"id":"recommendations", "title":"💡 Recommendations"},
 ]
 
 def slide(sid,yr,pres=True):
@@ -471,6 +472,42 @@ def slide(sid,yr,pres=True):
             c3a.markdown(kpi("FCF 2025",fm(FCF[2025]),GREEN if FCF[2025]>0 else RED,"Free Cash Flow",pres),unsafe_allow_html=True)
         with c2:
             st.plotly_chart(waterfall_fig(2025),use_container_width=True)
+
+    elif sid=="recommendations":
+        st.markdown(f"<h2 style='color:{TXT};'>Strategic Recommendations</h2>",unsafe_allow_html=True)
+        st.markdown(f"<p style='color:{TXT2};font-size:0.95rem;margin-bottom:20px;'>Based on the 2021–2025 financial analysis — four priority actions for Adidas leadership.</p>",unsafe_allow_html=True)
+        RECS=[
+            (RED,"1. Restore Working Capital Health",
+             "WC fell 49% (€5.0bn → €2.5bn) · WCN rose 43% (€1.75bn → €2.5bn) · Net Cash near zero (€19M vs €3.2bn in 2021)",
+             ["One bad year would force reliance on short-term bank loans",
+              "Reinforce long-term resources and aggressively shorten the operating cycle",
+              "Priority: reduce inventory glut — the core driver of WCN surge"]),
+            (ORANGE,"2. Rebuild the Liquidity Buffer",
+             "Cash ratio fell from 0.43 → 0.18 (−58%) · Quick ratio at 0.68 (below the critical 1.0 threshold)",
+             ["Adidas cannot cover short-term liabilities without liquidating slow-moving inventory",
+              "Target a cash buffer of €2.5–3bn to restore Quick Ratio above 1",
+              "Maintain disciplined dividend policy · defer major share buybacks"]),
+            (BLUE,"3. Gradually Deleverage",
+             "D/E rose from 0.76 → 1.09 (+44%) · Equity Multiplier at 3.5× (high-leverage zone)",
+             ["Interest coverage and ND/EBITDA are healthy, but capital mix has shifted structurally",
+              "Prioritise debt repayment over shareholder returns for the next 2–3 years",
+              "Goal: restore pre-crisis capital structure"]),
+            (GREEN,"4. Continue Margin Recovery Below the Gross Line",
+             "Gross margin stable (~51%) · EBIT margin 8.3% vs 9.4% in 2021 · EBITDA margin 12.6% vs 14.4% in 2021",
+             ["Margin pressure comes from marketing, distribution and G&A — not COGS",
+              "Restructure cost base to recover the 2021 margin profile",
+              "Operational leverage should improve as revenue grows toward 2026E"]),
+        ]
+        cols=st.columns(2)
+        for i,(color,title,context,bullets) in enumerate(RECS):
+            with cols[i%2]:
+                bl="".join(f"<li style='margin-bottom:6px;'>{b}</li>" for b in bullets)
+                st.markdown(f"""<div style="background:{color}18;border:1px solid {color}50;
+                    border-left:5px solid {color};border-radius:12px;padding:22px 24px;margin-bottom:18px;">
+                    <div style="font-weight:700;color:{color};font-size:1.05rem;margin-bottom:8px;">{title}</div>
+                    <div style="font-size:0.82rem;color:{TXT2};margin-bottom:12px;font-style:italic;">{context}</div>
+                    <ul style="margin:0;padding-left:18px;font-size:0.88rem;color:{TXT};line-height:1.7;">{bl}</ul>
+                </div>""",unsafe_allow_html=True)
 
 # ── PRESENTATION MODE ─────────────────────────────────────────────────────────
 def pres_mode():
@@ -755,43 +792,6 @@ def tab_statements():
                 fig2.add_trace(go.Bar(name=lbl,x=[str(y) for y in YH],y=[BS[key][yr] for yr in YH]))
             fig2.update_layout(barmode="stack",title=dict(text="Equity & Liabilities Structure (€M)",font=dict(size=13,color=TXT2)))
             st.plotly_chart(dark_fig(fig2,300),use_container_width=True)
-
-    # ── RECOMMENDATIONS ───────────────────────────────────────────────────────
-    st.markdown(f"<div style='font-size:1.15rem;font-weight:700;margin:28px 0 14px;"
-                f"padding-bottom:6px;border-bottom:2px solid {GOLD};color:{TXT};'>💡 Strategic Recommendations</div>",
-                unsafe_allow_html=True)
-    RECS=[
-        (RED,"1. Restore Working Capital Health",
-         "WC fell 49% (€5.0bn → €2.5bn) · WCN rose 43% (€1.75bn → €2.5bn) · Net Cash near zero (€19M vs €3.2bn in 2021)",
-         ["One bad year would force reliance on short-term bank loans",
-          "Reinforce long-term resources and aggressively shorten the operating cycle",
-          "Priority: reduce inventory glut — the core driver of WCN surge"]),
-        (ORANGE,"2. Rebuild the Liquidity Buffer",
-         "Cash ratio fell from 0.43 → 0.18 (−58%) · Quick ratio at 0.68 (below the critical 1.0 threshold)",
-         ["Adidas cannot cover short-term liabilities without liquidating slow-moving inventory",
-          "Target a cash buffer of €2.5–3bn to restore Quick Ratio above 1",
-          "Maintain disciplined dividend policy · defer major share buybacks"]),
-        (BLUE,"3. Gradually Deleverage",
-         "D/E rose from 0.76 → 1.09 (+44%) · Equity Multiplier at 3.5× (high-leverage zone)",
-         ["Interest coverage and ND/EBITDA are healthy, but capital mix has shifted structurally",
-          "Prioritise debt repayment over shareholder returns for the next 2–3 years",
-          "Goal: restore pre-crisis capital structure"]),
-        (GREEN,"4. Continue Margin Recovery Below the Gross Line",
-         "Gross margin stable (~51%) · EBIT margin 8.3% vs 9.4% in 2021 · EBITDA margin 12.6% vs 14.4% in 2021",
-         ["Margin pressure comes from marketing, distribution and G&A — not COGS",
-          "Restructure cost base to recover the 2021 margin profile",
-          "Operational leverage should improve as revenue grows toward 2026E"]),
-    ]
-    cols=st.columns(2)
-    for i,(color,title,context,bullets) in enumerate(RECS):
-        with cols[i%2]:
-            bl="".join(f"<li style='margin-bottom:4px;'>{b}</li>" for b in bullets)
-            st.markdown(f"""<div style="background:{color}10;border:1px solid {color}40;
-                border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;">
-                <div style="font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;">{title}</div>
-                <div style="font-size:0.78rem;color:{TXT2};margin-bottom:10px;font-style:italic;">{context}</div>
-                <ul style="margin:0;padding-left:16px;font-size:0.83rem;color:{TXT};line-height:1.6;">{bl}</ul>
-            </div>""",unsafe_allow_html=True)
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
