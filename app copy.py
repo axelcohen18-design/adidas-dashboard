@@ -307,6 +307,26 @@ def slide(sid,yr,pres=True):
             f"High Equity Multiplier (~3.5×) boosts ROE but signals elevated financial leverage. "
             f"EBITDA margin {fp(EBITDAM[yr])} reflects {'solid recovery' if yr in [2024,2025,'2026E'] else 'pressure'}.",color_roe(ROE[yr])),
             unsafe_allow_html=True)
+        fs_body="0.9rem" if pres else "0.82rem"
+        fs_ctx ="0.85rem" if pres else "0.78rem"
+        st.markdown(f"<div style='font-size:{'1.1rem' if pres else '1.0rem'};font-weight:700;margin:24px 0 12px;padding-bottom:5px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",unsafe_allow_html=True)
+        # ROE Trend
+        st.markdown(f"<p style='font-size:{fs_body};color:{GREEN};font-weight:700;margin:0 0 4px;'>📈 ROE Trend — V-Shape</p><p style='font-size:{fs_ctx};color:{TXT2};margin:0 0 4px;'>27% (2021) → −1.5% (2023) → 23.2% (2025)</p><p style='font-size:{fs_ctx};color:{TXT2};margin:0 0 4px;'>2023 drop: end of Kanye West partnership → €1bn+ unsold Yeezy products → heavy losses</p><p style='font-size:{fs_ctx};color:{TXT2};margin:0 0 16px;'>Strong recovery driven by <em>\"Own the Game\"</em> strategy & focus on key products → Samba / Gazelle</p>",unsafe_allow_html=True)
+        # DuPont cards
+        DUPONT_KT=[
+            (GREEN,"ROS: 5.4% ↑",
+             "Inventory cleared (discounts + charity sales) → Profitability improving"),
+            (BLUE,"Asset Turnover: 1.22× ↑",
+             "Strong sales rebound → 2025 revenues above pre-crisis levels"),
+            (ORANGE,"Equity Multiplier: 3.51× (high)",
+             "High debt level remains → Mainly lease obligations (post-COVID)"),
+        ]
+        kt_cols=st.columns(3)
+        for i,(color,title,detail) in enumerate(DUPONT_KT):
+            with kt_cols[i]:
+                st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:16px 18px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:{fs_body};margin-bottom:6px;'>{title}</div><div style='font-size:{fs_ctx};color:{TXT2};line-height:1.6;'>{detail}</div></div>",unsafe_allow_html=True)
+        # Key Takeaway
+        st.markdown(f"<div style='background:{GREEN}14;border:1px solid {GREEN}45;border-left:4px solid {GREEN};border-radius:10px;padding:16px 20px;margin-top:4px;'><div style='font-weight:700;color:{GREEN};font-size:{fs_body};margin-bottom:8px;'>💡 Key Takeaway</div><p style='font-size:{fs_ctx};color:{TXT};margin:2px 0;'>✅ Strong and healthy recovery</p><p style='font-size:{fs_ctx};color:{TXT};margin:2px 0;'>✅ Driven by operational performance — <strong>NOT</strong> by additional debt</p><p style='font-size:{fs_ctx};color:{TXT};margin:2px 0;'>✅ Positive signal for long-term sustainability</p></div>",unsafe_allow_html=True)
 
     elif sid=="operating":
         st.markdown(f"<h2 style='color:{TXT};'>Operating Management — FY {yr}</h2>",unsafe_allow_html=True)
@@ -631,6 +651,21 @@ def tab_profitability():
     st.markdown(ibox("Gross Margin recovered above 50% in 2024–2025. "
         "EBITDA Margin dropped to 6.3% in 2023 due to Yeezy revenue loss and elevated opex, now recovering toward 13.5% (2026E). "
         "EBIT Margin at 8.3% (2025) signals operational normalisation."),unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size:1.0rem;font-weight:700;margin:28px 0 14px;padding-bottom:5px;border-bottom:2px solid {GOLD};color:{TXT};'>📝 Key Takeaways</div>",unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size:0.95rem;color:{GREEN};font-weight:700;margin:0 0 4px;'>📈 ROE Trend — V-Shape</p><p style='font-size:0.82rem;color:{TXT2};margin:0 0 4px;'>27% (2021) → −1.5% (2023) → 23.2% (2025)</p><p style='font-size:0.82rem;color:{TXT2};margin:0 0 4px;'>2023 drop: end of Kanye West partnership → €1bn+ unsold Yeezy products → heavy losses</p><p style='font-size:0.82rem;color:{TXT2};margin:0 0 16px;'>Strong recovery driven by <em>\"Own the Game\"</em> strategy & focus on key products → Samba / Gazelle</p>",unsafe_allow_html=True)
+    DUPONT_KT=[
+        (GREEN,"ROS: 5.4% ↑",
+         "Inventory cleared (discounts + charity sales) → Profitability improving"),
+        (BLUE,"Asset Turnover: 1.22× ↑",
+         "Strong sales rebound → 2025 revenues above pre-crisis levels"),
+        (ORANGE,"Equity Multiplier: 3.51× (high)",
+         "High debt level remains → Mainly lease obligations (post-COVID)"),
+    ]
+    cols=st.columns(3)
+    for i,(color,title,detail) in enumerate(DUPONT_KT):
+        with cols[i]:
+            st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:16px 18px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;'>{title}</div><div style='font-size:0.82rem;color:{TXT2};line-height:1.6;'>{detail}</div></div>",unsafe_allow_html=True)
+    st.markdown(f"<div style='background:{GREEN}14;border:1px solid {GREEN}45;border-left:4px solid {GREEN};border-radius:10px;padding:16px 20px;margin-top:4px;'><div style='font-weight:700;color:{GREEN};font-size:0.95rem;margin-bottom:8px;'>💡 Key Takeaway</div><p style='font-size:0.82rem;color:{TXT};margin:2px 0;'>✅ Strong and healthy recovery</p><p style='font-size:0.82rem;color:{TXT};margin:2px 0;'>✅ Driven by operational performance — <strong>NOT</strong> by additional debt</p><p style='font-size:0.82rem;color:{TXT};margin:2px 0;'>✅ Positive signal for long-term sustainability</p></div>",unsafe_allow_html=True)
 
 def tab_operating():
     sec("Profit Margins")
