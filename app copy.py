@@ -354,9 +354,12 @@ def slide(sid,yr,pres=True):
         fs_ctx ="0.85rem" if pres else "0.78rem"
         for i,(color,title,context,bullets) in enumerate(KT_OP):
             with kt_cols[i%2]:
-                bl=("".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets) if bullets else "")
-                ul=(f"<ul style='margin:8px 0 0;padding-left:18px;font-size:{fs_body};color:{TXT};line-height:1.7;'>{bl}</ul>" if bl else "")
-                st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:{fs_body};margin-bottom:6px;'>{title}</div><div style='font-size:{fs_ctx};color:{TXT2};line-height:1.6;'>{context}</div>{ul}</div>",unsafe_allow_html=True)
+                if bullets:
+                    bl="".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets)
+                    ul=f"<ul style='margin:8px 0 0;padding-left:18px;font-size:{fs_body};color:{TXT};line-height:1.7;'>{bl}</ul>"
+                    st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:{fs_body};margin-bottom:6px;'>{title}</div><div style='font-size:{fs_ctx};color:{TXT2};line-height:1.6;'>{context}</div>{ul}</div>",unsafe_allow_html=True)
+                else:
+                    st.markdown(f"<div style='font-size:{fs_ctx};color:{TXT2};line-height:1.6;margin-bottom:14px;'>{context}</div>",unsafe_allow_html=True)
 
     elif sid=="investment":
         st.markdown(f"<h2 style='color:{TXT};'>Investment Management — FY {yr}</h2>",unsafe_allow_html=True)
@@ -671,11 +674,12 @@ def tab_operating():
     cols=st.columns(2)
     for i,(color,title,context,bullets) in enumerate(KT):
         with cols[i%2]:
-            bl=("".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets)
-                if bullets else "")
-            ul=(f"<ul style='margin:8px 0 0;padding-left:18px;font-size:0.84rem;color:{TXT};line-height:1.7;'>{bl}</ul>"
-                if bl else "")
-            st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;'>{title}</div><div style='font-size:0.82rem;color:{TXT2};line-height:1.6;'>{context}</div>{ul}</div>",unsafe_allow_html=True)
+            if bullets:
+                bl="".join(f"<li style='margin-bottom:5px;'>{b}</li>" for b in bullets)
+                ul=f"<ul style='margin:8px 0 0;padding-left:18px;font-size:0.84rem;color:{TXT};line-height:1.7;'>{bl}</ul>"
+                st.markdown(f"<div style='background:{color}14;border:1px solid {color}45;border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;'><div style='font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;'>{title}</div><div style='font-size:0.82rem;color:{TXT2};line-height:1.6;'>{context}</div>{ul}</div>",unsafe_allow_html=True)
+            else:
+                st.markdown(f"<div style='font-size:0.82rem;color:{TXT2};line-height:1.6;margin-bottom:14px;'>{context}</div>",unsafe_allow_html=True)
 
 def tab_investment():
     sec("Working Capital Days — FY 2025")
