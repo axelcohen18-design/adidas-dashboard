@@ -375,6 +375,47 @@ def slide(sid,yr,pres=True):
             f"<b>NC {fm(nc_v)}</b> {'confirms liquidity surplus' if nc_v>0 else 'signals short-term credit reliance'}.",sc_c),
             unsafe_allow_html=True)
 
+        # ── SFS Deep-Dive Key Takeaways ──────────────────────────────────────
+        st.markdown(f"<div style='font-size:1rem;font-weight:700;color:{TXT};margin:22px 0 10px;border-bottom:2px solid {GOLD};padding-bottom:5px;'>🔍 Deep-Dive Analysis</div>",unsafe_allow_html=True)
+        ka1,ka2=st.columns(2)
+        with ka1:
+            st.markdown(f"""<div style="background:{GREEN}12;border:1px solid {GREEN}44;border-left:4px solid {GREEN};border-radius:10px;padding:16px 18px;margin-bottom:10px;">
+            <div style="font-weight:700;color:{GREEN};font-size:0.92rem;margin-bottom:8px;">📗 FY 2021 — Peak Liquidity</div>
+            <div style="font-size:0.83rem;color:{TXT};line-height:1.7;">
+            • WC <b>€4,979M</b> — massive structural safety cushion<br>
+            • WCN <b>€1,753M</b> — efficient cycle, inventory well-controlled<br>
+            • NC <b>€3,226M</b> — €3.2B cash surplus, no external reliance needed<br>
+            • Net Debt <b>€2,109M</b> — fully manageable against reserves
+            </div></div>""",unsafe_allow_html=True)
+
+            st.markdown(f"""<div style="background:{RED}12;border:1px solid {RED}44;border-left:4px solid {RED};border-radius:10px;padding:16px 18px;">
+            <div style="font-weight:700;color:{RED};font-size:0.92rem;margin-bottom:8px;">📕 FY 2025 — The Liquidity Crunch</div>
+            <div style="font-size:0.83rem;color:{TXT};line-height:1.7;">
+            • WC <b>€2,533M</b> — safety net cut in half vs 2021<br>
+            • WCN <b>€2,514M</b> — ⚠️ inventory glut trapping billions in cash<br>
+            • NC <b>€19M</b> — the €3.2B surplus has effectively evaporated<br>
+            • Net Debt <b>€4,674M</b> — doubled; external debt now funds daily ops
+            </div></div>""",unsafe_allow_html=True)
+
+        with ka2:
+            st.markdown(f"""<div style="background:{ORANGE}12;border:1px solid {ORANGE}44;border-left:4px solid {ORANGE};border-radius:10px;padding:16px 18px;margin-bottom:10px;">
+            <div style="font-weight:700;color:{ORANGE};font-size:0.92rem;margin-bottom:8px;">✂️ The Scissor Effect (2021 → 2025)</div>
+            <div style="font-size:0.83rem;color:{TXT};line-height:1.7;">
+            • Working Capital: <b style="color:{RED};">−49.1%</b> — stable resources shrinking<br>
+            • WC Need: <b style="color:{RED};">+43.4%</b> — operational requirements surging<br>
+            • Net Cash: <b style="color:{RED};">−99.4%</b> — surplus effectively wiped out<br>
+            • Net Debt: <b style="color:{RED};">+121.6%</b> — more than doubled in 4 years
+            </div></div>""",unsafe_allow_html=True)
+
+            st.markdown(f"""<div style="background:{GOLD}12;border:1px solid {GOLD}44;border-left:4px solid {GOLD};border-radius:10px;padding:16px 18px;">
+            <div style="font-weight:700;color:{GOLD};font-size:0.92rem;margin-bottom:8px;">⚡ Strategic Takeaway</div>
+            <div style="font-size:0.83rem;color:{TXT};line-height:1.7;">
+            • Status: technically "Ideal" (Case 1) — but practically fragile<br>
+            • WC ≈ WCN leaves zero buffer for any operational shock<br>
+            • <b>Priority:</b> aggressively liquidate excess inventory to reduce WCN<br>
+            • Only path to restore NC and begin paying down the €4.6B debt load
+            </div></div>""",unsafe_allow_html=True)
+
     elif sid=="finmgmt":
         st.markdown(f"<h2 style='color:{TXT};'>Financial Management — FY {yr}</h2>",unsafe_allow_html=True)
         c1,c2,c3,c4=st.columns(4)
@@ -714,6 +755,43 @@ def tab_statements():
                 fig2.add_trace(go.Bar(name=lbl,x=[str(y) for y in YH],y=[BS[key][yr] for yr in YH]))
             fig2.update_layout(barmode="stack",title=dict(text="Equity & Liabilities Structure (€M)",font=dict(size=13,color=TXT2)))
             st.plotly_chart(dark_fig(fig2,300),use_container_width=True)
+
+    # ── RECOMMENDATIONS ───────────────────────────────────────────────────────
+    st.markdown(f"<div style='font-size:1.15rem;font-weight:700;margin:28px 0 14px;"
+                f"padding-bottom:6px;border-bottom:2px solid {GOLD};color:{TXT};'>💡 Strategic Recommendations</div>",
+                unsafe_allow_html=True)
+    RECS=[
+        (RED,"1. Restore Working Capital Health",
+         "WC fell 49% (€5.0bn → €2.5bn) · WCN rose 43% (€1.75bn → €2.5bn) · Net Cash near zero (€19M vs €3.2bn in 2021)",
+         ["One bad year would force reliance on short-term bank loans",
+          "Reinforce long-term resources and aggressively shorten the operating cycle",
+          "Priority: reduce inventory glut — the core driver of WCN surge"]),
+        (ORANGE,"2. Rebuild the Liquidity Buffer",
+         "Cash ratio fell from 0.43 → 0.18 (−58%) · Quick ratio at 0.68 (below the critical 1.0 threshold)",
+         ["Adidas cannot cover short-term liabilities without liquidating slow-moving inventory",
+          "Target a cash buffer of €2.5–3bn to restore Quick Ratio above 1",
+          "Maintain disciplined dividend policy · defer major share buybacks"]),
+        (BLUE,"3. Gradually Deleverage",
+         "D/E rose from 0.76 → 1.09 (+44%) · Equity Multiplier at 3.5× (high-leverage zone)",
+         ["Interest coverage and ND/EBITDA are healthy, but capital mix has shifted structurally",
+          "Prioritise debt repayment over shareholder returns for the next 2–3 years",
+          "Goal: restore pre-crisis capital structure"]),
+        (GREEN,"4. Continue Margin Recovery Below the Gross Line",
+         "Gross margin stable (~51%) · EBIT margin 8.3% vs 9.4% in 2021 · EBITDA margin 12.6% vs 14.4% in 2021",
+         ["Margin pressure comes from marketing, distribution and G&A — not COGS",
+          "Restructure cost base to recover the 2021 margin profile",
+          "Operational leverage should improve as revenue grows toward 2026E"]),
+    ]
+    cols=st.columns(2)
+    for i,(color,title,context,bullets) in enumerate(RECS):
+        with cols[i%2]:
+            bl="".join(f"<li style='margin-bottom:4px;'>{b}</li>" for b in bullets)
+            st.markdown(f"""<div style="background:{color}10;border:1px solid {color}40;
+                border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;">
+                <div style="font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;">{title}</div>
+                <div style="font-size:0.78rem;color:{TXT2};margin-bottom:10px;font-style:italic;">{context}</div>
+                <ul style="margin:0;padding-left:16px;font-size:0.83rem;color:{TXT};line-height:1.6;">{bl}</ul>
+            </div>""",unsafe_allow_html=True)
 
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
