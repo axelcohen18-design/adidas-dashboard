@@ -926,6 +926,43 @@ def tab_statements():
             fig2.update_layout(barmode="stack",title=dict(text="Equity & Liabilities Structure (€M)",font=dict(size=13,color=TXT2)))
             st.plotly_chart(dark_fig(fig2,300),use_container_width=True)
 
+    # ── RECOMMENDATIONS ───────────────────────────────────────────────────────
+    st.markdown(f"<div style='font-size:1.15rem;font-weight:700;margin:28px 0 14px;"
+                f"padding-bottom:6px;border-bottom:2px solid {GOLD};color:{TXT};'>💡 Strategic Recommendations</div>",
+                unsafe_allow_html=True)
+    RECS=[
+        (RED,"1. Restore Working Capital Health",
+         "WC fell 49% (€5.0bn → €2.5bn) · WCN rose 43% (€1.75bn → €2.5bn) · Net Cash near zero (€19M vs €3.2bn in 2021)",
+         ["One bad year would force reliance on short-term bank loans",
+          "Reinforce long-term resources and aggressively shorten the operating cycle",
+          "Priority: reduce inventory glut — the core driver of WCN surge"]),
+        (ORANGE,"2. Rebuild the Liquidity Buffer",
+         "Cash ratio fell from 0.43 → 0.18 (−58%) · Quick ratio at 0.68 (below the critical 1.0 threshold)",
+         ["Adidas cannot cover short-term liabilities without liquidating slow-moving inventory",
+          "Target a cash buffer of €2.5–3bn to restore Quick Ratio above 1",
+          "Maintain disciplined dividend policy · defer major share buybacks"]),
+        (BLUE,"3. Gradually Deleverage",
+         "D/E rose from 0.76 → 1.09 (+44%) · Equity Multiplier at 3.5× (high-leverage zone)",
+         ["Interest coverage and ND/EBITDA are healthy, but capital mix has shifted structurally",
+          "Prioritise debt repayment over shareholder returns for the next 2–3 years",
+          "Goal: restore pre-crisis capital structure"]),
+        (GREEN,"4. Continue Margin Recovery Below the Gross Line",
+         "Gross margin stable (~51%) · EBIT margin 8.3% vs 9.4% in 2021 · EBITDA margin 12.6% vs 14.4% in 2021",
+         ["Margin pressure comes from marketing, distribution and G&A — not COGS",
+          "Restructure cost base to recover the 2021 margin profile",
+          "Operational leverage should improve as revenue grows toward 2026E"]),
+    ]
+    cols=st.columns(2)
+    for i,(color,title,context,bullets) in enumerate(RECS):
+        with cols[i%2]:
+            bl="".join(f"<li style='margin-bottom:4px;'>{b}</li>" for b in bullets)
+            st.markdown(f"""<div style="background:{color}10;border:1px solid {color}40;
+                border-left:4px solid {color};border-radius:10px;padding:18px 20px;margin-bottom:14px;">
+                <div style="font-weight:700;color:{color};font-size:0.95rem;margin-bottom:6px;">{title}</div>
+                <div style="font-size:0.78rem;color:{TXT2};margin-bottom:10px;font-style:italic;">{context}</div>
+                <ul style="margin:0;padding-left:16px;font-size:0.83rem;color:{TXT};line-height:1.6;">{bl}</ul>
+            </div>""",unsafe_allow_html=True)
+
 # ── MAIN ──────────────────────────────────────────────────────────────────────
 def main():
     css()
